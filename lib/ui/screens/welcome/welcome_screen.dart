@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:live_project_bloc_firebase/components/routes/route_pages.dart';
+import 'package:live_project_bloc_firebase/ui/blocs/auth/login_bloc.dart';
 import 'package:live_project_bloc_firebase/ui/screens/widgets/full_width_button.dart';
 import 'package:social_login_buttons/social_login_buttons.dart';
 
@@ -27,27 +30,51 @@ class WelcomeScreen extends StatelessWidget {
         children: [
           Text('Lets get started',
               style: Theme.of(context).textTheme.titleLarge),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SocialLoginButton(
-                  buttonType: SocialLoginButtonType.apple,
-                  onPressed: () {},
+          BlocConsumer<LoginBloc, LoginState>(
+            listener: (context, state) {
+              if (state is LoginSuccessState) {
+                Fluttertoast.showToast(
+                  msg: "Successfully logged in",
+                );
+
+                Future.delayed(const Duration(seconds: 1), () {
+                  context.goNamed(Routes.HOME);
+                });
+              }
+            },
+            builder: (context, state) {
+              if (state is LoginLoadingState) {
+                return const Center(
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                );
+              }
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SocialLoginButton(
+                      buttonType: SocialLoginButtonType.apple,
+                      onPressed: () {},
+                    ),
+                    SizedBox(height: 10.h),
+                    SocialLoginButton(
+                      buttonType: SocialLoginButtonType.github,
+                      onPressed: () {},
+                    ),
+                    SizedBox(height: 10.h),
+                    SocialLoginButton(
+                      buttonType: SocialLoginButtonType.google,
+                      onPressed: () {
+                        context
+                            .read<LoginBloc>()
+                            .add(RequestGoogleLoginEvent());
+                      },
+                    )
+                  ],
                 ),
-                SizedBox(height: 10.h),
-                SocialLoginButton(
-                  buttonType: SocialLoginButtonType.github,
-                  onPressed: () {},
-                ),
-                SizedBox(height: 10.h),
-                SocialLoginButton(
-                  buttonType: SocialLoginButtonType.google,
-                  onPressed: () {},
-                )
-              ],
-            ),
+              );
+            },
           ),
           Column(
             mainAxisSize: MainAxisSize.min,

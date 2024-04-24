@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:live_project_bloc_firebase/data/services/auth_service.dart';
 import 'package:live_project_bloc_firebase/ui/screens/welcome/welcome_screen.dart';
 
 import '../../ui/home_screen.dart';
@@ -10,7 +11,21 @@ import '../../ui/wrapper.dart';
 part 'routes.dart';
 
 class RoutePages {
+  static final authService = AuthService();
   static final ROUTER = GoRouter(
+    // redirect: (context, state) {
+    //   if (authService.checkLoginStatus()) {
+    //     if (state.fullPath == Routes.LOGIN_ROUTE ||
+    //         state.fullPath == Routes.REGISTER_ROUTE ||
+    //         state.fullPath == Routes.WELCOME_ROUTE) {
+    //       return Routes.HOME;
+    //     } else {
+    //       return state.fullPath;
+    //     }
+    //   } else {
+    //     return Routes.WELCOME_ROUTE;
+    //   }
+    // },
     routes: [
       GoRoute(
           path: Routes.WELCOME_ROUTE,
